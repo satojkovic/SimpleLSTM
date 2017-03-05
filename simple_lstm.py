@@ -6,6 +6,7 @@ import sys
 import os
 import numpy as np
 import tflearn
+import matplotlib.pyplot as plt
 
 
 def min_max_normalize(train_data):
@@ -15,6 +16,8 @@ def min_max_normalize(train_data):
     return min_data, max_data, norm_data
 
 
+def real_data(min_data, max_data, data):
+    return data[0][0] * (max_data - min_data) + min_data
 
 
 def train_test_split_data(X, y, train_size=0.7):
@@ -78,6 +81,24 @@ def main():
 
     model = tflearn.DNN(net, tensorboard_verbose=0)
     model.fit(X_train, y_train, validation_set=0.1, batch_size=1, n_epoch=150)
+
+    # Evaluate a trained model
+    train_predict = model.predict(X_train)
+    test_predict = model.predict(X_test)
+
+    train_predict_plot = np.empty_like(raw_data)
+    train_predict_plot[:, :] = np.nan
+    train_predict_plot[1:len(train_predict) + 1, :] = train_predict
+
+    test_predict_plot = np.empty_like(raw_data)
+    test_predict_plot[:, :] = np.nan
+    test_predict_plot[len(train_predict) + 1:, :] = test_predict
+
+    plt.figure(figsize=(8, 8))
+    plt.plot(raw_data)
+    plt.plot(train_predict_plot)
+    plt.plot(test_predict_plot)
+    plt.show()
 
 
 if __name__ == '__main__':
