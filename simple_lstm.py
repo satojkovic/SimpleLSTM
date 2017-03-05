@@ -9,8 +9,12 @@ import tflearn
 
 
 def min_max_normalize(train_data):
-    return (train_data - np.min(train_data)) / (
-        np.max(train_data) - np.min(train_data))
+    min_data = np.min(train_data)
+    max_data = np.max(train_data)
+    norm_data = (train_data - min_data) / (max_data - min_data)
+    return min_data, max_data, norm_data
+
+
 
 
 def train_test_split_data(X, y, train_size=0.7):
@@ -54,7 +58,7 @@ def main():
     print('n_raw_data :', df.size)
 
     # Normalize a train_data
-    raw_data = min_max_normalize(raw_data)
+    min_data, max_data, raw_data = min_max_normalize(raw_data)
 
     # Create dataset from raw_data
     X, y = create_dataset(raw_data)
